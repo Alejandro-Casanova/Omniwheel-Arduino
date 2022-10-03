@@ -14,7 +14,7 @@ char pass[] = SECRET_PASS_4;    //Clave del Router
 
 int status = WL_IDLE_STATUS;
 
-uint8_t server[4] = {192, 168, 1, 45}; // Change to correct local ip
+uint8_t server[4] = {172, 16, 3, 130}; // Change to correct local ip
 uint16_t port = 8090;
 
 double phis[3]={PHI_1,PHI_3,PHI_2}; 
