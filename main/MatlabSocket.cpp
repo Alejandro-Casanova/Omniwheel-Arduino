@@ -17,6 +17,8 @@ int status = WL_IDLE_STATUS;
 uint8_t server[4] = {172, 16, 3, 130}; // Change to correct local ip
 uint16_t port = 8090;
 
+IPAddress ip(172, 16, 3, 131);  // Arduino static ip
+
 double phis[3]={PHI_1,PHI_3,PHI_2}; 
 
 //WiFiServer server(81); //Inicializamos un socket en el puerto 81
@@ -44,6 +46,9 @@ void initSocket(){
       Serial.println("Por favor, actualiza el firmware del dispositivo.");
       Serial.println("Wifi firmware"+fv+"Wifi last ver:"+WIFI_FIRMWARE_LATEST_VERSION);
     }
+
+    // Set static ip
+    WiFi.config(ip);
 
     // Intento de conexión a la red wifi:
     while (status != WL_CONNECTED) {
@@ -121,8 +126,9 @@ const uint8_t battery_level = 55;
 
 void send_status(){
   uint8_t infor[100];
-  sprintf((char*)infor, "{\"msg_type\":\"status\",\"battery\": \"%u\",\"time\": %lu}%c", battery_level, millis(), '\0');
+  sprintf((char*)infor, "{\"msg_type\":\"status\",\"connection\":\"online\",\"battery\": \"%u\",\"time\": %lu}%c", battery_level, millis(), '\0');
   client.print((char*)infor);
+  client.flush();
 }
 
 const char robot_name[] = "Omniwheel Test";
@@ -159,10 +165,12 @@ void socketHandler(int * mensaje){
       //Serial.println("Se ha establecido conexion con Matlab");
       alreadyConnected = true;
 
-      sprintf((char*)infor, "{\"msg_type\":\"init\",\"name\": \"%s\",\"robot_type\": \"%s\",\"time\": %lu}", robot_name, robot_type, millis());
+      sprintf((char*)infor, "{\"msg_type\":\"info\",\"name\": \"%s\",\"robot_type\": \"%s\",\"time\": %lu}", robot_name, robot_type, millis());
       client.print((char*)infor);
 
       client.flush();
+      delay(500);
+      send_status();
 
     }
     int i=1;

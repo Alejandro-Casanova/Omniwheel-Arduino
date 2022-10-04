@@ -21,18 +21,18 @@ char incomingByte = 0;
 int choice = 0;
 double piss[3]={3.141592/2,-3.141592/6,3.141592*7/6};
 
-void motor_test(){
+void motor_test(int motor_num){
   Serial.println("LOOP");
   while(1){
-    clkGen_setup();
+    //clkGen_setup();
     Serial.println("LOOP");
-    controlSpeed(1, 500000);
+    controlSpeed(motor_num, 500000);
     delay(3000);
-    controlSpeed(1, 0);
+    controlSpeed(motor_num, 0);
     delay(3000);
-    controlSpeed(1, -500000);
+    controlSpeed(motor_num, -500000);
     delay(3000);
-    controlSpeed(1, 0);
+    controlSpeed(motor_num, 0);
     delay(3000);
   }
 }
@@ -95,10 +95,12 @@ void clkGen_setup(){
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
-  //while(!Serial);
+  
+  // WAIT FOR SERIAL
+  while(!Serial);
   //delay(4000);
-  delay(4000);
-  clkGen_setup();
+  //delay(4000);
+  //clkGen_setup();
 
   
   
@@ -106,7 +108,7 @@ void setup() {
   initSPI();
 
   //delay(10000);
-  //initSocket();
+  initSocket();
   initMotors(); 
 }
 int mensaje[24]={'0','0','0','0','0','0','0','0','0','0','0','0',
@@ -114,13 +116,13 @@ int mensaje[24]={'0','0','0','0','0','0','0','0','0','0','0','0',
 int values[3]={-1,0,0};
 
 void loop() {
-  motor_test();
+  //motor_test(2);
   //setSpeeds(ws);
   /*ws[0]=0;
   ws[1]=0;
   ws[2]=0;*/
   
-  //socketHandler(mensaje);
+  socketHandler(mensaje);
 
   //chipSelect(1);
   //setRelPosition(values,50000);
