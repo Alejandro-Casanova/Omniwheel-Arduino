@@ -21,18 +21,26 @@ char incomingByte = 0;
 int choice = 0;
 double piss[3]={3.141592/2,-3.141592/6,3.141592*7/6};
 
-void motor_test(int motor_num){
+void motor_test(){
   Serial.println("LOOP");
   while(1){
     //clkGen_setup();
     Serial.println("LOOP");
-    controlSpeed(motor_num, 500000);
+    controlSpeed(0, 500000);
+    controlSpeed(1, 500000);
+    controlSpeed(2, 500000);
     delay(3000);
-    controlSpeed(motor_num, 0);
+    controlSpeed(0, 0);
+    controlSpeed(1, 0);
+    controlSpeed(2, 0);
     delay(3000);
-    controlSpeed(motor_num, -500000);
+    controlSpeed(0, -500000);
+    controlSpeed(1, -500000);
+    controlSpeed(2, -500000);
     delay(3000);
-    controlSpeed(motor_num, 0);
+    controlSpeed(0, 0);
+    controlSpeed(1, 0);
+    controlSpeed(2, 0);
     delay(3000);
   }
 }
@@ -62,10 +70,10 @@ void clkGen_setup(){
     .PINCFG[g_APinDescription[7].ulPin].bit.PMUXEN = 1;
   PORT->Group[g_APinDescription[7].ulPort]
     .PMUX[g_APinDescription[7].ulPin >> 1].reg |= PORT_PMUX_PMUXO_F;
-  // PORT->Group[g_APinDescription[5].ulPort]
-  //   .PINCFG[g_APinDescription[5].ulPin].bit.PMUXEN = 1;
-  // PORT->Group[g_APinDescription[5].ulPort]
-  //   .PMUX[g_APinDescription[5].ulPin >> 1].reg |= PORT_PMUX_PMUXO_F;  
+  PORT->Group[g_APinDescription[5].ulPort]
+    .PINCFG[g_APinDescription[5].ulPin].bit.PMUXEN = 1;
+  PORT->Group[g_APinDescription[5].ulPort]
+    .PMUX[g_APinDescription[5].ulPin >> 1].reg |= PORT_PMUX_PMUXO_F;  
 
   // Config Prescaler and period 
   REG_TCC0_WAVE |= TCC_WAVE_WAVEGEN_NPWM;
@@ -84,8 +92,8 @@ void clkGen_setup(){
   while(TCC0->SYNCBUSY.bit.CCB3); // Wait for write synchronization
 
   // For pin 5
-  // REG_TCC0_CCB1 = dutyCycle;
-  // while(TCC0->SYNCBUSY.bit.CCB1); // Wait for write synchronization
+  REG_TCC0_CCB1 = dutyCycle;
+  while(TCC0->SYNCBUSY.bit.CCB1); // Wait for write synchronization
 
   Serial.print("Duty Cycle: ");
   Serial.print(dutyCycle);
@@ -106,17 +114,18 @@ void setup() {
   
   init_pins();
   initSPI();
+  initMotors(); 
 
   //delay(10000);
-  initSocket();
-  initMotors(); 
+  // initSocket();
+  
 }
 int mensaje[24]={'0','0','0','0','0','0','0','0','0','0','0','0',
                  '0','0','0','0','0','0','0','0','0','0','0','0'};
 int values[3]={-1,0,0};
 
 void loop() {
-  //motor_test(2);
+  motor_test();
   //setSpeeds(ws);
   /*ws[0]=0;
   ws[1]=0;

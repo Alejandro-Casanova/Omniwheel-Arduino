@@ -152,31 +152,31 @@ switch (numero){
       digitalWrite(MOT0,LOW);
       digitalWrite(MOT1,HIGH);
       digitalWrite(MOT2,HIGH);
-      digitalWrite(MOT3,HIGH);     
+      // digitalWrite(MOT3,HIGH);     
       break;
   case 1:
       digitalWrite(MOT0,HIGH);
       digitalWrite(MOT1,LOW);
       digitalWrite(MOT2,HIGH);
-      digitalWrite(MOT3,HIGH);
+      // digitalWrite(MOT3,HIGH);
       break;
   case 2:
       digitalWrite(MOT0,HIGH);
       digitalWrite(MOT1,HIGH);
       digitalWrite(MOT2,LOW);
-      digitalWrite(MOT3,HIGH);
+      // digitalWrite(MOT3,HIGH);
       break;
   case 3:
       digitalWrite(MOT0,HIGH);
       digitalWrite(MOT1,HIGH);
       digitalWrite(MOT2,HIGH);
-      digitalWrite(MOT3,LOW);
+      // digitalWrite(MOT3,LOW);
       break;
   default:
       digitalWrite(MOT0,HIGH);
       digitalWrite(MOT1,HIGH);
       digitalWrite(MOT2,HIGH);
-      digitalWrite(MOT3,HIGH);
+      // digitalWrite(MOT3,HIGH);
       break;
 }
   

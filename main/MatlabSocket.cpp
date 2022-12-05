@@ -189,17 +189,23 @@ void socketHandler(int * mensaje){
 
       client.read(infor,4);
       infor[4] = '\0';  
+      Serial.print("MSG: ");
+      Serial.println((char*)infor);
       //Serial.print((char*)infor);
       //MODO VELOCIDADES MOTORES "OWR:"
       if(infor[0]=='O'&&infor[1]=='W'&&infor[2]=='R'&&infor[3]==':'){
             
         client.read(infor,23);
         infor[23]='\0';
+        Serial.println((char*)infor);
         //Serial.println((char*)infor);
         StringToVector(speeds_mot,(char*)infor);
         
         //sprintf((char*)infor, "speeds %d %d %d", speeds[0], speeds[1], speeds[2] );
         //Serial.println((char*)infor);
+        Serial.println(speeds_mot[0]);
+        Serial.println(speeds_mot[1]);
+        Serial.println(speeds_mot[2]);
         setSpeeds(speeds_mot);
         
       }
