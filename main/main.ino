@@ -117,7 +117,7 @@ void setup() {
   initMotors(); 
 
   //delay(10000);
-  // initSocket();
+  initSocket();
   
 }
 int mensaje[24]={'0','0','0','0','0','0','0','0','0','0','0','0',
@@ -125,7 +125,7 @@ int mensaje[24]={'0','0','0','0','0','0','0','0','0','0','0','0',
 int values[3]={-1,0,0};
 
 void loop() {
-  motor_test();
+  // motor_test();
   //setSpeeds(ws);
   /*ws[0]=0;
   ws[1]=0;

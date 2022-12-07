@@ -193,16 +193,17 @@ void socketHandler(int * mensaje){
       Serial.println((char*)infor);
       //Serial.print((char*)infor);
       //MODO VELOCIDADES MOTORES "OWR:"
-      if(infor[0]=='O'&&infor[1]=='W'&&infor[2]=='R'&&infor[3]==':'){
+      if(infor[0]=='O'&&infor[1]=='W'&&infor[2]=='R'&&infor[3]==':'){ // MOTOR SPEEDS
             
-        client.read(infor,23);
-        infor[23]='\0';
+        client.read(infor,27);
+        infor[27]='\0';
         Serial.println((char*)infor);
         //Serial.println((char*)infor);
         StringToVector(speeds_mot,(char*)infor);
         
         //sprintf((char*)infor, "speeds %d %d %d", speeds[0], speeds[1], speeds[2] );
         //Serial.println((char*)infor);
+        Serial.println("Motor Speeds: ");
         Serial.println(speeds_mot[0]);
         Serial.println(speeds_mot[1]);
         Serial.println(speeds_mot[2]);
@@ -215,51 +216,66 @@ void socketHandler(int * mensaje){
         
         client.read(infor,3);
         infor[3]='\0';
-        //Serial.print((char*)infor);
-        //Modo cinematica inversa "OWR_CI :: V_X :: V_Y :: V_W"
+        Serial.print((char*)infor);
+
+        //Modo cinematica inversa "OWR_CI :: V_X :: V_Y :: V_W" (ROBOT VELOCITY)
         if (infor[0]=='C'&&infor[1]=='I'&&infor[2]==':'){
 
-          client.read(infor,23);
-          infor[23]='\0';
-          //Serial.println((char*)infor);
+          client.read(infor,27);
+          infor[27]='\0';
+          Serial.println((char*)infor);
 
-          StringToVector(speeds,(char*)infor);
+          StringToVector(speeds, (char*)infor);
+          Serial.println("Robot Speeds: ");
           Serial.println(speeds[0]);
+          Serial.println(speeds[1]);
+          Serial.println(speeds[2]);
 
           //guardamos la velocidad actual
           /*velAct[0] = speeds[0];
           velAct[1] = speeds[1];
           velAct[2] = speeds[2];*/
           cinematicaInversa(L, R, phis, speeds, 0, ws);
+          Serial.println("Motor Speeds after Inv. Kinematic: ");
+          Serial.println(ws[0]);
+          Serial.println(ws[1]);
+          Serial.println(ws[2]);
           setSpeeds(ws);
         }
-        else if (infor[0]=='R'&&infor[1]=='P'&&infor[2]==':' ){
-            int tiemp_pos=0;
-            client.read(infor,23);
-            infor[23]='\0';
-            //Serial.println((char*)infor);
+        else if (infor[0]=='R'&&infor[1]=='P'&&infor[2]==':' ){ // ROBOT POSITION
+          int tiemp_pos=0;
+          client.read(infor,27);
+          infor[27]='\0';
+          
+          Serial.println((char*)infor);
 
-            StringToVector(positions,(char*)infor);
-            
-            //tiemp_pos=positions[2];
-            
-            relativePosition(posAct,positions);
+          StringToVector(positions,(char*)infor);
+          
+          //tiemp_pos=positions[2];
+          
+          relativePosition(posAct,positions);
 
-            /*if(tiemp_pos <=0){
-              tiemp_pos=10;
-            }*/
-            posReached = 0;
-            positions[0]/=1000;
-            positions[1]/=1000;
-            positions[2]/=1000;
-            setRelPosition(positions,75000);
-            //sprintf((char*)infor, "PosAct %d %d %d%c", posAct[0], posAct[1], posAct[2],'\0');
-            //client.println((char*)infor);
+          /*if(tiemp_pos <=0){
+            tiemp_pos=10;
+          }*/
+          posReached = 0;
+          positions[0]/=1000;
+          positions[1]/=1000;
+          positions[2]/=1000;
+
+          Serial.println("Motor Relative Positions: ");
+          Serial.println(positions[0]);
+          Serial.println(positions[1]);
+          Serial.println(positions[2]);
+
+          setRelPosition(positions,75000);
+          //sprintf((char*)infor, "PosAct %d %d %d%c", posAct[0], posAct[1], posAct[2],'\0');
+          //client.println((char*)infor);
             
         }
-        else if(infor[0]=='C'&&infor[1]=='P'&&infor[2]==':' ){
-          client.read(infor,23);
-          infor[23]='\0';
+        else if(infor[0]=='C'&&infor[1]=='P'&&infor[2]==':' ){ // ROBOT CARTESIAN POSITION
+          client.read(infor,27);
+          infor[27]='\0';
           Serial.println((char*)infor);
 
           StringToVector(positions,(char*)infor);
@@ -267,41 +283,43 @@ void socketHandler(int * mensaje){
           
           relativePosition(posAct,positions);
 
-          
+          Serial.println("Robot Cartesian Positions: ");
+          Serial.println(positions[0]);
+          Serial.println(positions[1]);
+          Serial.println(positions[2]);
+
           relCartesianPosition(positions,50000);
 
         }
       
       }
-      else if(infor[0]=='O'&&infor[1]=='W'&&infor[2]=='R'&&infor[3]=='-'){
+      else if(infor[0]=='O'&&infor[1]=='W'&&infor[2]=='R'&&infor[3]=='-'){ // Read 
         client.read(infor,5);
         infor[6]='\0';
-        //Serial.print((char*)infor);
+        Serial.print((char*)infor);
 
-        if (infor[0]=='R'&&infor[1]=='V'&&infor[2]=='E'&&infor[3]=='L'&&infor[4]==':'){
+        if (infor[0]=='R'&&infor[1]=='V'&&infor[2]=='E'&&infor[3]=='L'&&infor[4]==':'){ // Robot Velocity
           
 
-          client.read(infor,23);
-          infor[23]='\0';
-          //Serial.println((char*)infor);
+          client.read(infor,27);
+          infor[27]='\0';
+          Serial.println((char*)infor);
           
           //Guardamos el tiempo
           tiempoAct = millis();
           
           readVels(velAct);
+
           /* Serial.println(velAct[0]);
           Serial.println(velAct[1]);
           Serial.println(velAct[2]);*/
 
           //readPositions(posAct);
 
-          
-
-
           posReached = positionReached();
           int velActString[3] ={round(velAct[0]),round(velAct[1]),round(velAct[2])};
           
-          sprintf((char*)infor, "{\"vel\":[%d,%d,%d],\"pos\": [%i,%i,%i],\"tiempo\": %i,\"pos_reached\":%i}%c", velActString[0], velActString[1], velActString[2],posAct[0],posAct[1],posAct[2],tiempoAct,posReached,'\0');
+          sprintf((char*)infor, "{\"msg_type\":\"data\",\"vel\":[%d,%d,%d],\"pos\": [%i,%i,%i],\"time\": %i,\"pos_reached\":%i}%c", velActString[0], velActString[1], velActString[2],posAct[0],posAct[1],posAct[2],tiempoAct,posReached,'\0');
           tiempoPrev = tiempoAct;
           //Serial.println((char*)infor);
           client.print((char*)infor);
