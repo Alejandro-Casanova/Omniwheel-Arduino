@@ -48,8 +48,8 @@ void initMotors(){
     // tmc4361A_writeInt(i, TMC4361A_RAMPMODE, TMC4361A_MODE_POSITION);
     // tmc4361A_writeInt(i, TMC4361A_XACTUAL,0);
 
-    tmc4361A_writeInt(i, TMC4361A_CLK_FREQ, 24000000); //24 MHz (external clock provided by the arduino itself)
-    tmc4361A_writeInt(i, TMC4361A_STP_LENGTH_ADD, 99); //24 MHz (external clock provided by the arduino itself)
+    tmc4361A_writeInt(i, TMC4361A_CLK_FREQ, 24000000); //24 MHz (external clock provided oscillator)
+    tmc4361A_writeInt(i, TMC4361A_STP_LENGTH_ADD, 99);
   }
   
   int ws[3]={0,0,0};
@@ -416,10 +416,10 @@ void relCartesianPosition(double* posRel,int max_w){
   conversion = steps_rev*microsteps; //avance 1 mm y posicion en milimetros
 
 
-   for(int i=0;i<3;i++){
+  for(int i=0;i<3;i++){
     pasos[i]=posRel[i]*conversion;
     controlPosition(i,pasos[i], max_w, max_w);
-    }
+  }
   
 }
 

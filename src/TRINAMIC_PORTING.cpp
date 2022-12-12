@@ -20,11 +20,12 @@ void init_pins(){
   pinMode(MOT0,OUTPUT);
   pinMode(MOT1,OUTPUT);
   pinMode(MOT2,OUTPUT);
-  pinMode(MOT3,OUTPUT);
+  
+  //pinMode(MOT3,OUTPUT);
 
   //Enable de los drivers
-  pinMode(7, OUTPUT);
-  digitalWrite(7,LOW);
+  // pinMode(7, OUTPUT);
+  // digitalWrite(7,LOW);
 
   //definir el CS del motor
   //placa nueva:
@@ -34,9 +35,9 @@ void init_pins(){
   motorPin[2]=10;
   */
   //placa vieja:
-  motorPin[0]=9;
-  motorPin[1]=8;
-  motorPin[2]=7;//bien
+  // motorPin[0]=9;
+  // motorPin[1]=8;
+  // motorPin[2]=7;//bien
   
 }
 void initSPI(){
@@ -151,31 +152,31 @@ switch (numero){
       digitalWrite(MOT0,LOW);
       digitalWrite(MOT1,HIGH);
       digitalWrite(MOT2,HIGH);
-      digitalWrite(MOT3,HIGH);     
+      // digitalWrite(MOT3,HIGH);     
       break;
   case 1:
       digitalWrite(MOT0,HIGH);
       digitalWrite(MOT1,LOW);
       digitalWrite(MOT2,HIGH);
-      digitalWrite(MOT3,HIGH);
+      // digitalWrite(MOT3,HIGH);
       break;
   case 2:
       digitalWrite(MOT0,HIGH);
       digitalWrite(MOT1,HIGH);
       digitalWrite(MOT2,LOW);
-      digitalWrite(MOT3,HIGH);
+      // digitalWrite(MOT3,HIGH);
       break;
   case 3:
       digitalWrite(MOT0,HIGH);
       digitalWrite(MOT1,HIGH);
       digitalWrite(MOT2,HIGH);
-      digitalWrite(MOT3,LOW);
+      // digitalWrite(MOT3,LOW);
       break;
   default:
       digitalWrite(MOT0,HIGH);
       digitalWrite(MOT1,HIGH);
       digitalWrite(MOT2,HIGH);
-      digitalWrite(MOT3,HIGH);
+      // digitalWrite(MOT3,HIGH);
       break;
 }
   
