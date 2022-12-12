@@ -105,7 +105,7 @@ void setup() {
   Serial.begin(115200);
   
   // WAIT FOR SERIAL
-  while(!Serial);
+  // while(!Serial);
   //delay(4000);
   //delay(4000);
   //clkGen_setup();
