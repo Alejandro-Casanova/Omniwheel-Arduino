@@ -11,3 +11,4 @@
 int ATDec(int ascii);                          //Convierte el valor en ASCII de la cadena a un numero decimal
 void StringToVector(double* vector, char* string);
 void StringToVector(int* vector, char* string);
+void StringToGPIO(int* pin, int* val, char* string);

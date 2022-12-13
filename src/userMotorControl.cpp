@@ -61,7 +61,7 @@ void controlSpeed(int targetMotor, int v)
 
   if (v == 0)
   {
-    tmc4361A_writeInt(targetMotor, TMC4361A_VMAX, 0);
+    tmc40bit_writeDouble(targetMotor, TMC4361A_VMAX, 0.0, 8);
     return;
   }
   //uint8_t buff[100];
@@ -78,20 +78,20 @@ void controlSpeed(int targetMotor, int v)
   tmc4361A_writeInt(targetMotor, TMC4361A_BOW4, 500);
 
   // Set Max Acceleration and Deceleration
-  tmc4361A_writeInt(targetMotor, TMC4361A_AMAX, 5000);
-  tmc4361A_writeInt(targetMotor, TMC4361A_DMAX, 5000);
+  tmc40bit_writeDouble(targetMotor, TMC4361A_AMAX, 5000.0, 2);
+  tmc40bit_writeDouble(targetMotor, TMC4361A_DMAX, 5000.0, 2);
 
   // Set initial and final acceleration and deceleration
-  tmc4361A_writeInt(targetMotor, TMC4361A_ASTART, 0);
-  tmc4361A_writeInt(targetMotor, TMC4361A_DFINAL, 0);
+  tmc40bit_writeDouble(targetMotor, TMC4361A_ASTART, 0.0, 2);
+  tmc40bit_writeDouble(targetMotor, TMC4361A_DFINAL, 0.0, 2);
 
-  tmc4361A_writeInt(targetMotor, TMC4361A_VMAX, v); //*100
+  tmc40bit_writeDouble(targetMotor, TMC4361A_VMAX, (double)v, 8); //*100
 
 }
 
 void controlPos(int targetMotor, int pasos, int vel){
     tmc4361A_writeInt(targetMotor, TMC4361A_RAMPMODE, TMC4361A_RAMP_TRAPEZ | TMC4361A_RAMP_POSITION);
-    tmc4361A_writeInt(targetMotor, TMC4361A_VMAX, vel);
+    tmc40bit_writeDouble(targetMotor, TMC4361A_VMAX, (double)vel, 8);
     tmc4361A_writeInt(targetMotor, TMC4361A_XACTUAL, 0);
     tmc4361A_writeInt(targetMotor, TMC4361A_X_TARGET, pasos);
 }
@@ -101,9 +101,9 @@ void controlPosition(int targetMotor, int pasos, int vel, int accel){
   if(accel<0){return;}
 
     tmc4361A_writeInt(targetMotor, TMC4361A_RAMPMODE, TMC4361A_RAMP_TRAPEZ | TMC4361A_RAMP_POSITION);
-    tmc4361A_writeInt(targetMotor, TMC4361A_VMAX, vel);
-    tmc4361A_writeInt(targetMotor, TMC4361A_AMAX, accel);
-    tmc4361A_writeInt(targetMotor, TMC4361A_DMAX, accel);
+    tmc40bit_writeDouble(targetMotor, TMC4361A_VMAX, (double)vel, 8);
+    tmc40bit_writeDouble(targetMotor, TMC4361A_AMAX, (double)accel, 2);
+    tmc40bit_writeDouble(targetMotor, TMC4361A_DMAX, (double)accel, 2);
     tmc4361A_writeInt(targetMotor, TMC4361A_XACTUAL, 0);
     tmc4361A_writeInt(targetMotor, TMC4361A_X_TARGET, pasos);
 }
@@ -243,7 +243,7 @@ void setRelPosition(double* posRel,int max_w){
   Serial.println("");*/
 
   
-   for(int i=0;i<3;i++){
+  for(int i=0;i<3;i++){
     controlPosition(i,pasos[i], w_prop[i],w_prop[i]/8);
   }
 
@@ -415,9 +415,10 @@ void relCartesianPosition(double* posRel,int max_w){
   double pasos[3];
   conversion = steps_rev*microsteps; //avance 1 mm y posicion en milimetros
 
-
+  Serial.println("Relative Cartesian Pasos: ");
   for(int i=0;i<3;i++){
     pasos[i]=posRel[i]*conversion;
+    Serial.println(pasos[i]);
     controlPosition(i,pasos[i], max_w, max_w);
   }
   

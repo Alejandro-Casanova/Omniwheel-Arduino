@@ -8,10 +8,12 @@
  */
 
 #include "TRINAMIC_PORTING.h"
+#include "gpio_def.h"
 
 #include<SPI.h>
 
 uint8_t motorPin[3];
+
 void init_pins(){
   /*pinMode(DM1,OUTPUT);
   pinMode(DM2,OUTPUT);
@@ -20,6 +22,17 @@ void init_pins(){
   pinMode(MOT0,OUTPUT);
   pinMode(MOT1,OUTPUT);
   pinMode(MOT2,OUTPUT);
+
+  // Relay GPIOs
+  pinMode(GPIO_RL1, OUTPUT);
+  pinMode(GPIO_RL2, OUTPUT);
+  pinMode(GPIO_RL3, OUTPUT);
+  pinMode(GPIO_RL4, OUTPUT);
+
+  digitalWrite(GPIO_RL1, 0);
+  digitalWrite(GPIO_RL2, 0);
+  digitalWrite(GPIO_RL3, 0);
+  digitalWrite(GPIO_RL4, 0);
   
   //pinMode(MOT3,OUTPUT);
 
@@ -197,56 +210,79 @@ void tmc4361A_writeDatagram(uint8 motor, uint8 address, uint8 x1, uint8 x2, uint
 
 void tmc4361A_writeInt(uint8 motor, uint8 address, int value)
 {
-    tmc40bit_writeInt(motor, address, value);
+  tmc40bit_writeInt(motor, address, value);
 }
 
 int tmc4361A_readInt(u8 motor, uint8 address)
 {
-    tmc40bit_readInt(motor, address);
-    return tmc40bit_readInt(motor, address);
+  tmc40bit_readInt(motor, address);
+  return tmc40bit_readInt(motor, address);
 }
 
 // General SPI decription
 void tmc40bit_writeInt(u8 motor, uint8 address, int value)
 {
-    char tbuf[5];
+  char tbuf[5];
 
-    for (int i = 0; i < 5; i++)
-    {
-    	tbuf[i] = 0;
-    }
+  for (int i = 0; i < 5; i++)
+  {
+    tbuf[i] = 0;
+  }
 
-    tbuf[0] = address | 0x80;
-    tbuf[1] = 0xFF & (value>>24);
-    tbuf[2] = 0xFF & (value>>16);
-    tbuf[3] = 0xFF & (value>>8);
-    tbuf[4] = 0xFF & value;
+  tbuf[0] = address | 0x80;
+  tbuf[1] = 0xFF & (value>>24);
+  tbuf[2] = 0xFF & (value>>16);
+  tbuf[3] = 0xFF & (value>>8);
+  tbuf[4] = 0xFF & value;
 
+  chipSelect(motor);
+  SPI.transfer(tbuf,5);
+  chipSelect(4);
+}
 
-    chipSelect(motor);
-    SPI.transfer(tbuf,5);
-    chipSelect(4);
+void tmc40bit_writeDouble(u8 motor, uint8 address, double value, int decimal_bits) // TODO now Discards decimals 
+{
+  char tbuf[5];
+  int integer_part = int(value);
+
+  if(decimal_bits > 8)
+    decimal_bits = 8;
+
+  for (int i = 0; i < 5; i++)
+  {
+    tbuf[i] = 0;
+  }
+
+  tbuf[0] = address | 0x80;
+  tbuf[1] = 0xFF & ( integer_part >> (24 - decimal_bits) );
+  tbuf[2] = 0xFF & ( integer_part >> (16 - decimal_bits) );
+  tbuf[3] = 0xFF & ( integer_part >> ( 8 - decimal_bits) );
+  tbuf[4] = 0xFF & ( integer_part << decimal_bits ); // Decimal Places
+
+  chipSelect(motor);
+  SPI.transfer(tbuf,5);
+  chipSelect(4);
 }
 
 int tmc40bit_readInt(u8 motor, uint8 address)
 {
-    char tbuf[5], rbuf[5];
-    int32_t value;
+  char tbuf[5], rbuf[5];
+  int32_t value;
 	// clear write bit
-    value = 0;
-    for (int i = 0; i < 5; i++)
-    {
-    	tbuf[i] = 0;
-    	rbuf[i] = 0;
-    }
+  value = 0;
+  for (int i = 0; i < 5; i++)
+  {
+    tbuf[i] = 0;
+    rbuf[i] = 0;
+  }
 
 	tbuf[0] = address & 0x7F;
 
-    chipSelect(motor);
-    for(int i=0;i<5;i++){
-      rbuf[i]=SPI.transfer(tbuf[i]);
-    }
-    chipSelect(4);
+  chipSelect(motor);
+  for(int i=0;i<5;i++){
+    rbuf[i]=SPI.transfer(tbuf[i]);
+  }
+  chipSelect(4);
 
 	value =rbuf[1];
 	value <<= 8;

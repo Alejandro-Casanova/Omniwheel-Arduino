@@ -5,6 +5,7 @@
 
 #include "frameManager.h"
 #include "userMotorControl.h"
+#include "gpio_def.h"
 #include "cinematicaInversa.h"
 
 
@@ -144,7 +145,7 @@ void socketHandler(int* mensaje) {
 
   //Cuando el Cliente escriba el primer byte saluda
   if (client.connected()) {
-    uint8_t infor[100];
+    uint8_t infor[200];
     // Serial.println("Connected to Server Now");
     // Serial.print("Status: ");
     // Serial.println(client.status());
@@ -167,8 +168,16 @@ void socketHandler(int* mensaje) {
 
       sprintf((char*)infor, "{\"msg_type\":\"info\",\"name\": \"%s\",\"robot_type\": \"%s\",\"time\": %lu}", robot_name, robot_type, millis());
       client.print((char*)infor);
-
       client.flush();
+      delay(500);
+
+      sprintf((char*)infor, "{\"msg_type\":\"gpio\",\"time\":%lu,\"gpio\":[{\"name\":\"RL1\",\"num\":%d,\"val\":%d},{\"name\":\"RL2\",\"num\":%d,\"val\":%d},{\"name\":\"RL3\",\"num\":%d,\"val\":%d},{\"name\":\"RL4\",\"num\":%d,\"val\":%d}]}", 
+        millis(), GPIO_RL1, 0, GPIO_RL2, 0, GPIO_RL3, 0, GPIO_RL4, 0);
+
+      client.print((char*)infor);
+      client.flush();
+
+
       delay(500);
       send_status();
     }
@@ -194,8 +203,8 @@ void socketHandler(int* mensaje) {
       //MODO VELOCIDADES MOTORES "OWR:"
       if (infor[0] == 'O' && infor[1] == 'W' && infor[2] == 'R' && infor[3] == ':') {  // MOTOR SPEEDS
 
-        client.read(infor, 27);
-        infor[27] = '\0';
+        client.read(infor, 26);
+        infor[26] = '\0';
         Serial.println((char*)infor);
         //Serial.println((char*)infor);
         StringToVector(speeds_mot, (char*)infor);
@@ -206,7 +215,7 @@ void socketHandler(int* mensaje) {
         Serial.println(speeds_mot[0]);
         Serial.println(speeds_mot[1]);
         Serial.println(speeds_mot[2]);
-        setSpeeds(speeds_mot);
+        setSpeeds(speeds_mot); // Gets pulses/s
 
       }
 
@@ -220,12 +229,15 @@ void socketHandler(int* mensaje) {
         //Modo cinematica inversa "OWR_CI :: V_X :: V_Y :: V_W" (ROBOT VELOCITY)
         if (infor[0] == 'C' && infor[1] == 'I' && infor[2] == ':') {
 
-          client.read(infor, 27);
-          infor[27] = '\0';
+          client.read(infor, 26);
+          infor[26] = '\0';
           Serial.println((char*)infor);
 
           StringToVector(speeds, (char*)infor);
-          Serial.println("Robot Speeds: ");
+          speeds[0] /= 1000;
+          speeds[1] /= 1000;
+          speeds[2] /= 1000;
+          Serial.println("Robot Speeds (m/s): ");
           Serial.println(speeds[0]);
           Serial.println(speeds[1]);
           Serial.println(speeds[2]);
@@ -239,11 +251,22 @@ void socketHandler(int* mensaje) {
           Serial.println(ws[0]);
           Serial.println(ws[1]);
           Serial.println(ws[2]);
-          setSpeeds(ws);
+
+          ws[0] = (int)((double)ws[0] * (4000.0 / 2.0 / PI));
+          ws[1] = (int)((double)ws[1] * (4000.0 / 2.0 / PI));
+          ws[2] = (int)((double)ws[2] * (4000.0 / 2.0 / PI));
+
+          Serial.println("In pulses/sec: ");
+          Serial.println(ws[0]);
+          Serial.println(ws[1]);
+          Serial.println(ws[2]);
+          
+          setSpeeds(ws); // Gets pulses/s
+
         } else if (infor[0] == 'R' && infor[1] == 'P' && infor[2] == ':') {  // ROBOT POSITION
           int tiemp_pos = 0;
-          client.read(infor, 27);
-          infor[27] = '\0';
+          client.read(infor, 26);
+          infor[26] = '\0';
 
           Serial.println((char*)infor);
 
@@ -271,8 +294,8 @@ void socketHandler(int* mensaje) {
           //client.println((char*)infor);
 
         } else if (infor[0] == 'C' && infor[1] == 'P' && infor[2] == ':') {  // ROBOT CARTESIAN POSITION
-          client.read(infor, 27);
-          infor[27] = '\0';
+          client.read(infor, 26);
+          infor[26] = '\0';
           Serial.println((char*)infor);
 
           StringToVector(positions, (char*)infor);
@@ -286,6 +309,25 @@ void socketHandler(int* mensaje) {
           Serial.println(positions[2]);
 
           relCartesianPosition(positions, 50000);
+        } else if (infor[0] == 'G' && infor[1] == 'P' && infor[2] == ':') {  // GPIO WRITE
+          int pin, val;
+          client.read(infor, 4);
+          infor[4] = '\0';
+          Serial.println((char*)infor);
+
+          StringToGPIO(&pin, &val, (char*)infor);
+
+          Serial.print("Pin and Val: ");
+          Serial.print(pin);
+          Serial.print(" ");
+          Serial.println(val);
+
+          if(pin != GPIO_RL1 && pin != GPIO_RL2 && pin != GPIO_RL3 && pin != GPIO_RL4){
+            Serial.println("Invalid Pin");
+          }else{
+            digitalWrite(pin, val);
+          }
+
         }
 
       } else if (infor[0] == 'O' && infor[1] == 'W' && infor[2] == 'R' && infor[3] == '-') {  // Read
@@ -293,7 +335,7 @@ void socketHandler(int* mensaje) {
         infor[6] = '\0';
         Serial.print((char*)infor);
 
-        if (infor[0] == 'R' && infor[1] == 'V' && infor[2] == 'E' && infor[3] == 'L' && infor[4] == ':') {  // Robot Velocity
+        if (infor[0] == 'R' && infor[1] == 'V' && infor[2] == 'E' && infor[3] == 'L' && infor[4] == ':') {  // Robot Velocity (and position)
 
 
           client.read(infor, 27);
@@ -318,6 +360,14 @@ void socketHandler(int* mensaje) {
           tiempoPrev = tiempoAct;
           //Serial.println((char*)infor);
           client.print((char*)infor);
+          client.flush();
+
+        }else if (infor[0] == 'G' && infor[1] == 'P' && infor[2] == 'I' && infor[3] == 'O' && infor[4] == ':') {  // Read GPIO
+          sprintf((char*)infor, "{\"msg_type\":\"gpio\",\"time\":%lu,\"gpio\":[{\"name\":\"RL1\",\"num\":%d,\"val\":%d},{\"name\":\"RL2\",\"num\":%d,\"val\":%d},{\"name\":\"RL3\",\"num\":%d,\"val\":%d},{\"name\":\"RL4\",\"num\":%d,\"val\":%d}]}", 
+            millis(), GPIO_RL1, digitalRead(GPIO_RL1), GPIO_RL2, digitalRead(GPIO_RL2), GPIO_RL3, digitalRead(GPIO_RL3), GPIO_RL4, digitalRead(GPIO_RL4));
+
+          client.print((char*)infor);
+          client.flush();
         }
       } else {
 

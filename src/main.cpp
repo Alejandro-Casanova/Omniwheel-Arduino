@@ -13,7 +13,6 @@
 #define VELBASE 0.5
 
 
-
 int ws[3]={-40744,-40744,-40744};
 //double vels[3]={0,0,M_PI/2};
 int vels[3]={0,5,0};
@@ -114,6 +113,9 @@ void setup() {
   
   init_pins();
   initSPI();
+
+  delay(2000); // IMPORTANT! MUST WAIT UNTIL DRIVERS ARE POWERED ON 
+
   initMotors(); 
 
   //delay(10000);

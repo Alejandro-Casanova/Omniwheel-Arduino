@@ -29,6 +29,21 @@ String getSubString(String data, char separator, int index)
   return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
+void StringToGPIO(int* pin, int* val, char* string){
+  
+  String aux_string(string); 
+  String part1 = getSubString(aux_string, ':', 0);
+  String part2 = getSubString(aux_string, ':', 1);
+
+  *pin = part1.toInt();
+  *val = part2.toInt();
+
+  if(*val > 1 || *val < 0){
+    *val = 0;
+  }
+
+}
+
 void StringToVector(int* vector, char* string){
   
   String aux_string(string); 

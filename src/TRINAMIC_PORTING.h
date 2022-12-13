@@ -38,6 +38,7 @@ int tmc4361A_readInt(u8 motor, uint8 address);
 
 // General SPI functions
 void tmc40bit_writeInt(u8 motor, uint8 address, int value);
+void tmc40bit_writeDouble(u8 motor, uint8 address, double value, int decimal_bits); // TODO now Discards decimals 
 int tmc40bit_readInt(u8 motor, uint8 address);
 int tmc40bit_readStatus(u8 motor, uint8 address);
 

@@ -2,8 +2,6 @@
 #include"cinematicaInversa.h"
 #include <math.h>
 
-
-
 double phiis[3]={PHI_1,PHI_3,PHI_2}; 
 void cinematicaDirecta(float longitud, float radio, double* angulosRuedas,double* vel,double omega,int* w){
   double detM;
@@ -78,7 +76,7 @@ void cinematicaDirecta(float longitud, float radio, double* angulosRuedas,double
 
  
 }
-void cinematicaInversa(float longitud, float radio, double* angulosRuedas,double* vel,double omega,int* w){
+void cinematicaInversa(float longitud, float radio, double* angulosRuedas, double* vel, double omega,int* w){
   
   double detM;
   double velocidad[3];

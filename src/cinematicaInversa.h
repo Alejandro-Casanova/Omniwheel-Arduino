@@ -10,15 +10,15 @@
 
 #include <Arduino.h>
 
-#define ang_giro    1.8
+#define ang_giro    360 //1.8
 #define steps_rev   (360/ang_giro)
-#define microsteps  256
-#define  f_ti       1.4
+#define microsteps  4000 //256
+#define f_ti       1.4
 #define f_ajuste    1 
 #define f_ajuste_pasos  1.111//Factor de ajuste experimental para que recorra una distancia en el tiempo adecuado
 
-#define L 0.09 //0.29
-#define R 0.028 //0.063
+#define L 0.022 //0.09 //0.29
+#define R 0.063 //0.028 //0.063
 
 #define PHI_1 (3.141592/2)
 #define PHI_2 (-3.141592/6)
