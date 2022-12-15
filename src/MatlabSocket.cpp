@@ -15,10 +15,12 @@ char pass[] = SECRET_PASS_4;  //Clave del Router
 
 int status = WL_IDLE_STATUS;
 
-uint8_t server[4] = { 172, 16, 3, 130 };  // Change to correct local ip
+// uint8_t server[4] = { 172, 16, 3, 130 };  // Ethernet
+uint8_t server[4] = { 192, 168, 1, 45 };  // WiFi
 uint16_t port = 8090;
 
-IPAddress ip(172, 16, 3, 131);  // Arduino static ip
+// IPAddress ip(172, 16, 3, 130);  // Arduino static ip
+// IPAddress ip(172, 16, 3, 131);  // Arduino static ip
 
 double phis[3] = { PHI_1, PHI_3, PHI_2 };
 
@@ -50,7 +52,7 @@ void initSocket() {
   }
 
   // Set static ip
-  WiFi.config(ip);
+  // WiFi.config(ip);
 
   // Intento de conexión a la red wifi:
   while (status != WL_CONNECTED) {
@@ -198,7 +200,7 @@ void socketHandler(int* mensaje) {
       client.read(infor, 4);
       infor[4] = '\0';
       Serial.print("MSG: ");
-      Serial.println((char*)infor);
+      Serial.print((char*)infor);
       //Serial.print((char*)infor);
       //MODO VELOCIDADES MOTORES "OWR:"
       if (infor[0] == 'O' && infor[1] == 'W' && infor[2] == 'R' && infor[3] == ':') {  // MOTOR SPEEDS
@@ -274,21 +276,24 @@ void socketHandler(int* mensaje) {
 
           //tiemp_pos=positions[2];
 
+          // Update Current Position
           relativePosition(posAct, positions);
+          posReached = 0;
 
           /*if(tiemp_pos <=0){
             tiemp_pos=10;
           }*/
-          posReached = 0;
+          
           positions[0] /= 1000;
           positions[1] /= 1000;
           positions[2] /= 1000;
 
-          Serial.println("Motor Relative Positions: ");
+          Serial.println("Robot Relative Position: ");
           Serial.println(positions[0]);
           Serial.println(positions[1]);
           Serial.println(positions[2]);
 
+          
           setRelPosition(positions, 75000);
           //sprintf((char*)infor, "PosAct %d %d %d%c", posAct[0], posAct[1], posAct[2],'\0');
           //client.println((char*)infor);
@@ -300,15 +305,27 @@ void socketHandler(int* mensaje) {
 
           StringToVector(positions, (char*)infor);
 
+          // Calculate relative position that we must move to get to absolute coordinates
+          positions[0] -= posAct[0];
+          positions[1] -= posAct[1];
+          positions[2] -= posAct[2];
 
+          // Update Current Position
           relativePosition(posAct, positions);
+          posReached = 0;
+
+          // Scale Positions
+          positions[0] /= 1000;
+          positions[1] /= 1000;
+          positions[2] /= 1000;
 
           Serial.println("Robot Cartesian Positions: ");
           Serial.println(positions[0]);
           Serial.println(positions[1]);
           Serial.println(positions[2]);
 
-          relCartesianPosition(positions, 50000);
+          setRelPosition(positions, 75000);
+          // relCartesianPosition(positions, 50000);
         } else if (infor[0] == 'G' && infor[1] == 'P' && infor[2] == ':') {  // GPIO WRITE
           int pin, val;
           client.read(infor, 4);
@@ -332,14 +349,14 @@ void socketHandler(int* mensaje) {
 
       } else if (infor[0] == 'O' && infor[1] == 'W' && infor[2] == 'R' && infor[3] == '-') {  // Read
         client.read(infor, 5);
-        infor[6] = '\0';
-        Serial.print((char*)infor);
+        infor[5] = '\0';
+        Serial.println((char*)infor);
 
         if (infor[0] == 'R' && infor[1] == 'V' && infor[2] == 'E' && infor[3] == 'L' && infor[4] == ':') {  // Robot Velocity (and position)
 
 
-          client.read(infor, 27);
-          infor[27] = '\0';
+          client.read(infor, 26);
+          infor[26] = '\0';
           Serial.println((char*)infor);
 
           //Guardamos el tiempo

@@ -108,14 +108,11 @@ void setup() {
   //delay(4000);
   //delay(4000);
   //clkGen_setup();
-
-  
-  
   init_pins();
+  
+  delay(5000); // IMPORTANT! MUST WAIT UNTIL DRIVERS ARE POWERED ON 
+  
   initSPI();
-
-  delay(2000); // IMPORTANT! MUST WAIT UNTIL DRIVERS ARE POWERED ON 
-
   initMotors(); 
 
   //delay(10000);

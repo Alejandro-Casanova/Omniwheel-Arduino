@@ -12,6 +12,8 @@
 
 #include<SPI.h>
 
+SPISettings my_SPI_Settings(1000000, MSBFIRST, SPI_MODE0);
+
 uint8_t motorPin[3];
 
 void init_pins(){
@@ -236,7 +238,9 @@ void tmc40bit_writeInt(u8 motor, uint8 address, int value)
   tbuf[4] = 0xFF & value;
 
   chipSelect(motor);
+  SPI.beginTransaction(my_SPI_Settings);
   SPI.transfer(tbuf,5);
+  SPI.endTransaction();
   chipSelect(4);
 }
 
@@ -260,7 +264,9 @@ void tmc40bit_writeDouble(u8 motor, uint8 address, double value, int decimal_bit
   tbuf[4] = 0xFF & ( integer_part << decimal_bits ); // Decimal Places
 
   chipSelect(motor);
+  SPI.beginTransaction(my_SPI_Settings);
   SPI.transfer(tbuf,5);
+  SPI.endTransaction();
   chipSelect(4);
 }
 
@@ -279,9 +285,11 @@ int tmc40bit_readInt(u8 motor, uint8 address)
 	tbuf[0] = address & 0x7F;
 
   chipSelect(motor);
+  SPI.beginTransaction(my_SPI_Settings);
   for(int i=0;i<5;i++){
     rbuf[i]=SPI.transfer(tbuf[i]);
   }
+  SPI.endTransaction();
   chipSelect(4);
 
 	value =rbuf[1];
@@ -316,9 +324,11 @@ int tmc40bit_readStatus(u8 motor, uint8 address)
 	tbuf[0] = address & 0x7F;
 
     chipSelect(motor);
+    SPI.beginTransaction(my_SPI_Settings);
     for(int i=0;i<5;i++){
       rbuf[i]=SPI.transfer(tbuf[i]);
     }
+    SPI.endTransaction();
     chipSelect(4);
 
 	
