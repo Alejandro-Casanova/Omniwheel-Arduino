@@ -25,17 +25,17 @@ void motor_test(){
   while(1){
     //clkGen_setup();
     Serial.println("LOOP");
-    controlSpeed(0, 500000);
-    controlSpeed(1, 500000);
-    controlSpeed(2, 500000);
+    controlSpeed(0, 5000);
+    controlSpeed(1, 5000);
+    controlSpeed(2, 5000);
     delay(3000);
     controlSpeed(0, 0);
     controlSpeed(1, 0);
     controlSpeed(2, 0);
     delay(3000);
-    controlSpeed(0, -500000);
-    controlSpeed(1, -500000);
-    controlSpeed(2, -500000);
+    controlSpeed(0, -5000);
+    controlSpeed(1, -5000);
+    controlSpeed(2, -5000);
     delay(3000);
     controlSpeed(0, 0);
     controlSpeed(1, 0);
@@ -115,7 +115,7 @@ void setup() {
   initSPI();
   initMotors(); 
 
-  //delay(10000);
+  //delay(5000);
   initSocket();
   
 }
@@ -124,7 +124,7 @@ int mensaje[24]={'0','0','0','0','0','0','0','0','0','0','0','0',
 int values[3]={-1,0,0};
 
 void loop() {
-  // motor_test();
+  //motor_test();
   //setSpeeds(ws);
   /*ws[0]=0;
   ws[1]=0;

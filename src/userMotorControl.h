@@ -9,7 +9,7 @@
 //************************************************************************************************************************
 
 void initMotors();                          //Funcion que inicializa los drivers de los motores y los pone a velocidad 0.
-void controlSpeed(int targetMotor, int v);  //Funcion que permite controlar la velocidad de un motor. Ej: controlSpeed(0,5000);
+void controlSpeed(int targetMotor, int vel, double acc = 5000.0);  //Funcion que permite controlar la velocidad de un motor. Ej: controlSpeed(0,5000);
 void setSpeeds(int * velMotores);           //Funcion que permite escribir las velocidades de los tres motores. Ej: setSpeeds(velocidades);
 int readVel(int Motor);                     //Funcion que lee la velocidad del motor
 void readVels(double* v);

@@ -21,10 +21,10 @@
 */
 #define RELEASE 0  
 
-#define MOT0 2
-#define MOT1 1
-#define MOT2 0
-#define MOT3 21 //A6
+#define MOT0 5
+#define MOT1 4
+#define MOT2 3
+#define MOT3 2 
 
 //arduino conf
 void initSPI();

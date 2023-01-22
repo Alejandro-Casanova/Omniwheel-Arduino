@@ -56,16 +56,16 @@ void initMotors(){
   setSpeeds(ws);
 }
 
-void controlSpeed(int targetMotor, int v)
+void controlSpeed(int targetMotor, int vel, double acc)
 {
 
-  if (v == 0)
+  if (vel == 0)
   {
     tmc40bit_writeDouble(targetMotor, TMC4361A_VMAX, 0.0, 8);
     return;
   }
   //uint8_t buff[100];
-  //sprintf((char*)buff, "Motor %d -> req speed: %d",targetMotor, v);
+  //sprintf((char*)buff, "Motor %d -> req speed: %d",targetMotor, vel);
   //Serial.println((char*)buff);
 
   // Velocity Mode S-Shape Ramp
@@ -78,14 +78,14 @@ void controlSpeed(int targetMotor, int v)
   tmc4361A_writeInt(targetMotor, TMC4361A_BOW4, 500);
 
   // Set Max Acceleration and Deceleration
-  tmc40bit_writeDouble(targetMotor, TMC4361A_AMAX, 5000.0, 2);
-  tmc40bit_writeDouble(targetMotor, TMC4361A_DMAX, 5000.0, 2);
+  tmc40bit_writeDouble(targetMotor, TMC4361A_AMAX, acc, 2);
+  tmc40bit_writeDouble(targetMotor, TMC4361A_DMAX, acc, 2);
 
   // Set initial and final acceleration and deceleration
   tmc40bit_writeDouble(targetMotor, TMC4361A_ASTART, 0.0, 2);
   tmc40bit_writeDouble(targetMotor, TMC4361A_DFINAL, 0.0, 2);
 
-  tmc40bit_writeDouble(targetMotor, TMC4361A_VMAX, (double)v, 8); //*100
+  tmc40bit_writeDouble(targetMotor, TMC4361A_VMAX, (double)vel, 8); //*100
 
 }
 
@@ -178,7 +178,7 @@ void setRelPosition(double* posRel,int max_w){
   //Velocidad de rueda ideal
   w_ideal = 1/(R);
   //Vemos en la proporcion que se mueven los motores
-  cinematicaInversaRadianes(L,R,phis_mot,vel_unit,0,w_prop);
+  cinematicaInversaRadianes(L, R, phis_mot, vel_unit, 0, w_prop);
   /*Serial.print("w_prop:");
   Serial.print(w_prop[0]);
   Serial.print("\t");
@@ -196,22 +196,22 @@ void setRelPosition(double* posRel,int max_w){
   }
 
   //Hacemos las velocidades positivas
-   for(int i = 0;i<3;i++){
-    if(w_prop[i]<0){
-      w_prop[i]=-w_prop[i];
+   for(int i = 0; i < 3; i++){
+    if(w_prop[i] < 0){
+      w_prop[i] = -w_prop[i];
     }
   }
 
   double w_big = 1;
   //Escalamos teniendo en cuenta el maximo
-  for(int i =0; i<3; i++){
-    if(abs(w_prop[i])>w_big){
+  for(int i = 0; i < 3; i++){
+    if( abs(w_prop[i]) > w_big ){
       w_big = abs(w_prop[i]);
     }
   }
 
-  for(int i = 0;i<3;i++){
-    w_prop[i] = round((w_prop[i]/w_big)*max_w);
+  for(int i = 0; i < 3; i++){
+    w_prop[i] = round( (w_prop[i] / w_big) * max_w);
   }
 
   /*Serial.println("pasos_ideal");
@@ -244,7 +244,7 @@ void setRelPosition(double* posRel,int max_w){
 
   
   for(int i=0;i<3;i++){
-    controlPosition(i,pasos[i], w_prop[i],w_prop[i]/8);
+    controlPosition(i, pasos[i], w_prop[i], w_prop[i]/2);
   }
 
 
