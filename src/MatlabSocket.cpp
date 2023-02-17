@@ -217,6 +217,11 @@ void socketHandler(int* mensaje) {
         Serial.println(speeds_mot[0]);
         Serial.println(speeds_mot[1]);
         Serial.println(speeds_mot[2]);
+
+        speeds_mot[0] *= f_reductoras;
+        speeds_mot[1] *= f_reductoras;
+        speeds_mot[2] *= f_reductoras;
+
         setSpeeds(speeds_mot); // Gets pulses/s
 
       }
@@ -294,7 +299,7 @@ void socketHandler(int* mensaje) {
           Serial.println(positions[2]);
 
           
-          setRelPosition(positions, 7500);
+          setRelPosition(positions, 75000);
           //sprintf((char*)infor, "PosAct %d %d %d%c", posAct[0], posAct[1], posAct[2],'\0');
           //client.println((char*)infor);
 
@@ -324,7 +329,7 @@ void socketHandler(int* mensaje) {
           Serial.println(positions[1]);
           Serial.println(positions[2]);
 
-          setRelPosition(positions, 7500);
+          setRelPosition(positions, 75000);
           // relCartesianPosition(positions, 50000);
         } else if (infor[0] == 'G' && infor[1] == 'P' && infor[2] == ':') {  // GPIO WRITE
           int pin, val;

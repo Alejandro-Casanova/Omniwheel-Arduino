@@ -174,7 +174,7 @@ void setRelPosition(double* posRel,int max_w){
   double w_prop[3];
   
   //Calculamos el numero de pasos que daria un motor para recorrer la distancia si esta situado perpendicular al movimiento
-  pasos_ideal = ((mod/(2*PI*R))*microsteps*steps_rev);
+  pasos_ideal = ((mod/(2*PI*R))*microsteps*steps_rev*f_reductoras);
   //Velocidad de rueda ideal
   w_ideal = 1/(R);
   //Vemos en la proporcion que se mueven los motores

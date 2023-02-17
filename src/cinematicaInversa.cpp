@@ -12,9 +12,9 @@ void cinematicaDirecta(float longitud, float radio, double* angulosRuedas,double
   
   // Conversion de pasos a velocidades angulares
   // Variables de velocidad (rad/s <- rev/s <- steps/s <- microsteps/s]
-  w[0] = w[0]*(1000*(2*M_PI)/(steps_rev*microsteps*f_ti));
-  w[1] = w[1]*(1000*(2*M_PI)/(steps_rev*microsteps*f_ti)); 
-  w[2] = w[2]*(1000*(2*M_PI)/(steps_rev*microsteps*f_ti));
+  w[0] = w[0]*(1000*(2*M_PI)/(steps_rev*microsteps*f_ti*f_reductoras));
+  w[1] = w[1]*(1000*(2*M_PI)/(steps_rev*microsteps*f_ti*f_reductoras)); 
+  w[2] = w[2]*(1000*(2*M_PI)/(steps_rev*microsteps*f_ti*f_reductoras));
 
   //Calculo de la matriz geométrica
   //  M = 1/r*[ -sin(phi(1)),cos(phi(1)),L;       M =   [ M[0]  M[1]  M[2]
@@ -113,9 +113,9 @@ void cinematicaInversa(float longitud, float radio, double* angulosRuedas, doubl
 
   // Conversion velocidades angulares a pasos 
   // Variables de velocidad (rad/s -> rev/s -> steps/s -> microsteps/s]
-  w[0] = round((w[0]/(2*M_PI)*steps_rev*microsteps*f_ti)/1000);
-  w[1] = round((w[1]/(2*M_PI)*steps_rev*microsteps*f_ti)/1000);
-  w[2] = round((w[2]/(2*M_PI)*steps_rev*microsteps*f_ti)/1000);
+  w[0] = round((w[0]/(2*M_PI)*steps_rev*microsteps*f_ti*f_reductoras)/1000);
+  w[1] = round((w[1]/(2*M_PI)*steps_rev*microsteps*f_ti*f_reductoras)/1000);
+  w[2] = round((w[2]/(2*M_PI)*steps_rev*microsteps*f_ti*f_reductoras)/1000);
 
 }
 

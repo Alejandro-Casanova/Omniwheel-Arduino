@@ -15,9 +15,10 @@
 #define microsteps  4000 //256
 #define f_ti       1.4
 #define f_ajuste    1 
+#define f_reductoras 10
 #define f_ajuste_pasos  1.111//Factor de ajuste experimental para que recorra una distancia en el tiempo adecuado
 
-#define L 0.022 //0.09 //0.29
+#define L 0.27 //0.09 //0.29
 #define R 0.063 //0.028 //0.063
 
 #define PHI_1 (3.141592/2)
